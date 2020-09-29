@@ -93,4 +93,5 @@ backup_path = pathlib.Path(backup_folder_path) / file_name # Build target file p
 exe_path = Config.get('Folders', 'exe7z_path') # Get path from settings file.
 
 cmd7zip = exe_path + ' a -t7z ' + str(backup_path) + ' ' + source_path + ' -mx=7' # Command line code. (Using compression level 7)
-subprocess.call(cmd7zip) # Backup process.
+if (source_path != '') and (backup_path != '') and (exe_path != ''):
+    subprocess.call(cmd7zip) # Backup process.
