@@ -18,3 +18,6 @@ C:\\Program Files (x86)\\World of Warcraft\\\_retail\_\\WTF\\Account\\(your acco
 
 #### Program configuration file location:
 C:\\Users\\(user)\\KazyWoWBackup
+
+#### Buy me a coffee!
+paypal.me/bmrtins
