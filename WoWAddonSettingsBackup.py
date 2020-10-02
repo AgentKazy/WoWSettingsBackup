@@ -7,6 +7,7 @@ from tkinter import filedialog
 import subprocess
 import time
 from datetime import datetime
+from re import search
 
 cls = lambda: os.system('cls')
 cls()
@@ -106,10 +107,13 @@ exe_path = Config.get('Folders', 'exe7z_path') # Get path from settings file.
 
 cmd7zip = exe_path + ' a -t7z ' + str(backup_path) + ' ' + source_path + ' -mx=7' # Command line code. (Using compression level 7)
 
-if (source_path != '') and (backup_path != '') and (exe_path != ''):
+if (source_path != '') and (backup_path != '') and (exe_path != '') and search('7za.exe', exe_path): # and search('World of Warcraft', source_path):
     try:
         subprocess.call(cmd7zip) # Backup process.
         quit()
     except IOError:
-        print('Unable to backup folder. Check your permissions.')
+        print('Unable to backup folder. Check 7za.exe path or your permissions.')
         input('Press ENTER to exit.')
+else:
+    print('Paths are incorrect.')
+    input('Press ENTER to exit.')
