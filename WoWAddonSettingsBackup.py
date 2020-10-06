@@ -47,7 +47,6 @@ if not config_file.is_file(): # If configuration file doesn't exist:
         input('Press ENTER to exit.')
 
 # > CHOOSE FOLDERS
-
 root = tk.Tk()
 root.withdraw()
 new_settings = open(config_file,'r+', encoding='utf-8') # Open file in 'write' mode, UTF-8 encoding.
@@ -94,7 +93,6 @@ except IOError:
     input('Press ENTER to exit.')
 
 # > MAIN SETTINGS
-
 current_time = datetime.now().strftime("%Y-%m-%d %H-%M-%S") # Current time in specific format.
 
 Config.read(config_file) # Read settings file.
@@ -113,11 +111,11 @@ files = destination_path.glob('Settings Backup*.7z')
 file_list = []
 for file in files:
     file_list.append(file)
-for x in file_list[:-6]:
+file_list.sort()
+for x in file_list:
     Path.unlink(x)
 
 # > BACKUP SETTINGS
-
 cmd7zip = exe_path + ' a -t7z ' + str(backup_path) + ' ' + source_path + ' -mx=7' # Command line code. (Using compression level 7)
 
 if (source_path != '') and (backup_path != '') and (exe_path != '') and search('7za.exe', exe_path): # and search('World of Warcraft', source_path):
