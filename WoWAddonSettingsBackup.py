@@ -7,7 +7,9 @@ from tkinter import filedialog
 import subprocess
 import time
 from datetime import datetime
+import re
 from re import search
+import glob
 
 cls = lambda: os.system('cls')
 cls()
@@ -91,7 +93,7 @@ except IOError:
     print('Unable to write to file. Check your permissions.')
     input('Press ENTER to exit.')
 
-# > MAIN FUNCTION
+# > MAIN SETTINGS
 
 current_time = datetime.now().strftime("%Y-%m-%d %H-%M-%S") # Current time in specific format.
 
@@ -104,6 +106,17 @@ file_name = str('"Settings Backup ' + current_time + '.7z"') # Create file name 
 backup_path = pathlib.Path(backup_folder_path) / file_name # Build target file path.
 
 exe_path = Config.get('Folders', 'exe7z_path') # Get path from settings file.
+
+# > REMOVE OLD BACKUPS (KEEP 7)
+destination_path = Path(re.sub('"', '', backup_folder_path))
+files = destination_path.glob('Settings Backup*.7z')
+file_list = []
+for file in files:
+    file_list.append(file)
+for x in file_list[:-6]:
+    Path.unlink(x)
+
+# > BACKUP SETTINGS
 
 cmd7zip = exe_path + ' a -t7z ' + str(backup_path) + ' ' + source_path + ' -mx=7' # Command line code. (Using compression level 7)
 
