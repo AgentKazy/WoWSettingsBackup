@@ -112,7 +112,7 @@ file_list = []
 for file in files:
     file_list.append(file)
 file_list.sort()
-for x in file_list:
+for x in file_list[:6]:
     Path.unlink(x)
 
 # > BACKUP SETTINGS
