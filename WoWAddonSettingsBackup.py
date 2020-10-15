@@ -4,11 +4,11 @@ from pathlib import Path
 import configparser
 import tkinter as tk
 from tkinter import filedialog
-import subprocess
 import time
 from datetime import datetime
 import re
 from re import search
+import shutil
 import glob
 
 cls = lambda: os.system('cls')
@@ -37,8 +37,6 @@ if not config_file.is_file(): # If configuration file doesn't exist:
         Config.set('Folders','settings_path','') # Create sub-section and value.
         Config.set('Folders','destination_flag','False') # Create sub-section and value.
         Config.set('Folders','destination_path','') # Create sub-section and value.
-        Config.set('Folders','exe7z_flag','False') # Create sub-section and value.
-        Config.set('Folders','exe7z_path','') # Create sub-section and value.
         Config.write(cfg_settings) # Write settings to 'config_file'.
         cfg_settings.close() # Close file.
         #print('Configuration file created.') # Print file successfuly created.
@@ -51,11 +49,10 @@ root = tk.Tk()
 root.withdraw()
 new_settings = open(config_file,'r+', encoding='utf-8') # Open file in 'write' mode, UTF-8 encoding.
 Config.read(config_file) # Read file settings.
-addon_flag = Config.get('Folders', 'settings_flag') # Get settings flag.
-backup_flag = Config.get('Folders', 'destination_flag') # Get destination flag.
-exe_flag = Config.get('Folders', 'exe7z_flag') # Get exe flag.
+addon_settings_flag = Config.get('Folders', 'settings_flag') # Get settings flag.
+backup_destination_flag = Config.get('Folders', 'destination_flag') # Get destination flag.
 
-if addon_flag == 'False': # If flag is 'False':
+if addon_settings_flag == 'False': # If flag is 'False':
     settings_folder_path = filedialog.askdirectory(title='Choose settings folder') # Prompt directory.
     if settings_folder_path == '': # If no folder is selected.
         pass
@@ -65,23 +62,13 @@ if addon_flag == 'False': # If flag is 'False':
 else:
     pass
 
-if backup_flag == 'False': # If flag is 'False':
+if backup_destination_flag == 'False': # If flag is 'False':
     destination_folder_path = filedialog.askdirectory(title='Choose destination folder') # Prompt directory.
     if destination_folder_path == '': # If no folder is selected.
         pass
     else:
         Config.set('Folders','destination_flag','True') # Set flag to 'True'.
         Config.set('Folders','destination_path',str('"' + destination_folder_path + '"')) # Set destination path.
-else:
-    pass
-
-if exe_flag == 'False': # If flag is 'False':
-    exe7z_folder_path = filedialog.askopenfilename(title='Open 7za.exe file') # Prompt directory.
-    if exe7z_folder_path == '': # If no folder is selected.
-        pass
-    else:
-        Config.set('Folders','exe7z_flag','True') # Set flag to 'True'.
-        Config.set('Folders','exe7z_path',str('"' + exe7z_folder_path + '"')) # Set destination path.
 else:
     pass
 
@@ -94,37 +81,34 @@ except IOError:
 
 # > MAIN SETTINGS
 current_time = datetime.now().strftime("%Y-%m-%d %H-%M-%S") # Current time in specific format.
-
 Config.read(config_file) # Read settings file.
-
 source_path = Config.get('Folders', 'settings_path') # Get path from settings file.
 backup_folder_path = Config.get('Folders', 'destination_path') # Get path from settings file.
-
-file_name = str('"Settings Backup ' + current_time + '.7z"') # Create file name using current time.
-backup_path = pathlib.Path(backup_folder_path) / file_name # Build target file path.
-
-exe_path = Config.get('Folders', 'exe7z_path') # Get path from settings file.
+final_source_path = Path(re.sub('"', '', source_path)) # Create path object.
+final_dest_path = Path(re.sub('"', '', backup_folder_path)) # Create path object.
+file_name = Path('Settings Backup ' + current_time)
 
 # > REMOVE OLD BACKUPS (KEEP 7)
-destination_path = Path(re.sub('"', '', backup_folder_path))
-files = destination_path.glob('Settings Backup*.7z')
+files = final_dest_path.glob('Settings Backup*.zip')
 file_list = []
 for file in files:
     file_list.append(file)
 file_list.sort()
-for x in file_list[:-6]:
+for x in file_list[:-4]:
     Path.unlink(x)
 
 # > BACKUP SETTINGS
-cmd7zip = exe_path + ' a -t7z ' + str(backup_path) + ' ' + source_path + ' -mx=7' # Command line code. (Using compression level 7)
-
-if (source_path != '') and (backup_path != '') and (exe_path != '') and search('7za.exe', exe_path): # and search('World of Warcraft', source_path):
+if (source_path != '') and (backup_folder_path != ''): # and search('World of Warcraft', final_source_path):
     try:
-        subprocess.call(cmd7zip) # Backup process.
-        quit()
+        print('Settings path: ' + source_path) # Print source.
+        print('Backup path: ' + backup_folder_path) # Print destination.
+        shutil.make_archive(final_dest_path / file_name, 'zip', final_source_path.parent, final_source_path.name) # Backup process.
+        print('') # Empty line.
+        print('> Backup complete!') # Success!
+        time.sleep(3) # Wait 3 seconds.
     except IOError:
-        print('Unable to backup folder. Check 7za.exe path or your permissions.')
+        print('Unable to create backup folder at destination. Check your permissions.')
         input('Press ENTER to exit.')
 else:
-    print('Paths are incorrect.')
+    print("Paths are empty and/or didn't save properly.")
     input('Press ENTER to exit.')
