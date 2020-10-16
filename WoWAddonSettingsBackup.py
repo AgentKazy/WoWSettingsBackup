@@ -25,7 +25,7 @@ if not config_folder.is_dir(): # If folder doesn't exist:
         print('Unable to create folder. Check your permissions.')
         input('Press ENTER to exit.')
 
-config_file = pathlib.Path(config_folder) / 'AddonSettingsBackup.ini' # Path to configuration file.
+config_file = config_folder / 'AddonSettingsBackup.ini' # Path to configuration file.
 Config = configparser.ConfigParser() # Determine parser.
 
 if not config_file.is_file(): # If configuration file doesn't exist:
