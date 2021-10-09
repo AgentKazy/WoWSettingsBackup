@@ -11,28 +11,30 @@ from re import search
 import shutil
 import glob
 
-cls = lambda: os.system('cls')
-cls()
+os.system('cls')
+
 # --------------------------------------------------------------------------- #
 #                  WoW Addon Settings Backup by /u/AgentKazy                  #
 # --------------------------------------------------------------------------- #
 # > CONFIGURATION FILE
-config_folder = pathlib.Path.home() / 'KazyWoWBackup' # Path to configuration file.
-if not config_folder.is_dir(): # If folder doesn't exist:
+# Path to configuration file
+config_folder = pathlib.Path.home() / 'KazyWoWBackup'
+if not config_folder.is_dir():  # If folder doesn't exist:
     try:
-        config_folder.mkdir(parents=True, exist_ok=True) # Create folder.
+        config_folder.mkdir(parents=True, exist_ok=True)  # Create folder.
     except IOError:
         print('Unable to create folder. Check your permissions.')
         input('Press ENTER to exit.')
 
-config_file = config_folder / 'AddonSettingsBackup.ini' # Path to configuration file.
-Config = configparser.ConfigParser() # Determine parser.
+# Path to configuration file
+config_file = config_folder / 'AddonSettingsBackup.ini'
+Config = configparser.ConfigParser()  # Determine parser.
 
-if not config_file.is_file(): # If configuration file doesn't exist:
+if not config_file.is_file():  # If configuration file doesn't exist:
     try:
         open(config_file, 'x', encoding='utf-8') # Create file, UTF-8 encoding.
         cfg_settings = open(config_file,'r+', encoding='utf-8') # Open file in 'read+' mode, UTF-8 encoding.
-        Config.add_section('Folders') # Create section 'Folders'.
+        Config.add_section('Folders')  # Create section 'Folders'.
         Config.set('Folders','settings_flag','False') # Create sub-section and value.
         Config.set('Folders','settings_path','') # Create sub-section and value.
         Config.set('Folders','destination_flag','False') # Create sub-section and value.
@@ -98,16 +100,17 @@ for x in file_list[:-4]:
     Path.unlink(x)
 
 # > BACKUP SETTINGS
-if (source_path != '') and (backup_folder_path != ''): # and search('World of Warcraft', final_source_path):
+if (source_path != '') and (backup_folder_path != ''):  # and search('World of Warcraft', final_source_path):
     try:
-        print('Settings path: ' + source_path) # Print source.
-        print('Backup path: ' + backup_folder_path) # Print destination.
+        print('Settings path: ' + source_path)  # Print source.
+        print('Backup path: ' + backup_folder_path)  # Print destination.
         shutil.make_archive(final_dest_path / file_name, 'zip', final_source_path.parent, final_source_path.name) # Backup process.
-        print('') # Empty line.
-        print('> Backup complete!') # Success!
-        time.sleep(3) # Wait 3 seconds.
+        print('')  # Empty line.
+        print('> Backup complete!')  # Success!
+        time.sleep(3)  # Wait 3 seconds.
     except IOError:
-        print('Unable to create backup folder at destination. Check your permissions.')
+        print('''Unable to create backup folder at destination.
+         Check your permissions.''')
         input('Press ENTER to exit.')
 else:
     print("Paths are empty and/or didn't save properly.")
